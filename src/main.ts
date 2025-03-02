@@ -40,7 +40,7 @@ function noSearchDefaultPageRender() {
             <input 
               type="text" 
               id="defaultBang" 
-              class="url-input" 
+              class="bang-input" 
               value="${localStorage.getItem("default-bang") ?? DEFAULT_BANG}"
             />
           </div>

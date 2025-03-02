@@ -234,6 +234,16 @@ textarea {
   text-align: left;
 }
 
+.bang-input {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 100%;
+  background: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--text-color);
+}
+
 .settings-group {
   margin: 16px 0;
 }
