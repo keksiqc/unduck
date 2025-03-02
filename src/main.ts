@@ -45,11 +45,19 @@ function noSearchDefaultPageRender() {
   });
 }
 
-const LS_DEFAULT_BANG = localStorage.getItem("default-bang") ?? "brave";
-const defaultBang = bangs.find((b) => b.t === LS_DEFAULT_BANG);
+const url = new URL(window.location.href);
+const DEFAULT_BANG = "g";
+
+const defaultParam = url.searchParams.get("default")?.toLowerCase();
+if (defaultParam) {
+  localStorage.setItem("default-bang", defaultParam);
+}
+
+const defaultBang = bangs.find(
+  (b) => b.t === (defaultParam ?? localStorage.getItem("default-bang") ?? DEFAULT_BANG)
+);
 
 function getBangredirectUrl() {
-  const url = new URL(window.location.href);
   const query = url.searchParams.get("q")?.trim() ?? "";
   if (!query) {
     noSearchDefaultPageRender();
