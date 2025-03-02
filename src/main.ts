@@ -1,11 +1,37 @@
 import { bangs } from "./bang";
 import "./global.css";
 
+// Initialize theme from localStorage or system preference
+function initializeTheme() {
+  const savedTheme = localStorage.getItem("theme");
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const theme = savedTheme || (prefersDark ? "dark" : "light");
+  
+  document.documentElement.dataset.theme = theme;
+  if (!savedTheme) {
+    localStorage.setItem("theme", theme);
+  }
+}
+
+initializeTheme();
+
+function toggleTheme() {
+  const currentTheme = document.documentElement.dataset.theme;
+  const newTheme = (currentTheme || "light") === "dark" ? "light" : "dark";
+  document.documentElement.dataset.theme = newTheme;
+  localStorage.setItem("theme", newTheme);
+  
+  // Update theme toggle button icon
+  const themeIcon = document.querySelector<HTMLImageElement>(".theme-button img")!;
+  themeIcon.src = newTheme === "dark" ? "/sun.svg" : "/moon.svg";
+  themeIcon.alt = newTheme === "dark" ? "Light mode" : "Dark mode";
+}
+
 function noSearchDefaultPageRender() {
   const app = document.querySelector<HTMLDivElement>("#app")!;
   const hostname = window.location.hostname;
   app.innerHTML = `
-    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;">
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh;">
       <div id="settingsModal" class="modal" style="display: none;">
         <div class="modal-content">
           <h2>Settings</h2>
@@ -37,6 +63,10 @@ function noSearchDefaultPageRender() {
           <button class="copy-button">
             <img src="/clipboard.svg" alt="Copy" />
           </button>
+          <button class="theme-button settings-button" title="Toggle theme">
+            <img src="${document.documentElement.dataset.theme === 'dark' ? '/sun.svg' : '/moon.svg'}" 
+                 alt="${document.documentElement.dataset.theme === 'dark' ? 'Light mode' : 'Dark mode'}" />
+          </button>
           <button class="settings-button" title="Settings">
             <img src="/settings.svg" alt="Settings" />
           </button>
@@ -55,6 +85,10 @@ function noSearchDefaultPageRender() {
   const copyButton = app.querySelector<HTMLButtonElement>(".copy-button")!;
   const copyIcon = copyButton.querySelector("img")!;
   const urlInput = app.querySelector<HTMLInputElement>(".url-input")!;
+
+  // Theme toggle functionality
+  const themeButton = app.querySelector<HTMLButtonElement>(".theme-button")!;
+  themeButton.addEventListener("click", toggleTheme);
 
   copyButton.addEventListener("click", async () => {
     await navigator.clipboard.writeText(urlInput.value);
