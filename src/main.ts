@@ -6,6 +6,24 @@ function noSearchDefaultPageRender() {
   const hostname = window.location.hostname;
   app.innerHTML = `
     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;">
+      <div id="settingsModal" class="modal" style="display: none;">
+        <div class="modal-content">
+          <h2>Settings</h2>
+          <div class="settings-group">
+            <label for="defaultBang">Default Bang:</label>
+            <input 
+              type="text" 
+              id="defaultBang" 
+              class="url-input" 
+              value="${localStorage.getItem("default-bang") ?? DEFAULT_BANG}"
+            />
+          </div>
+          <div class="button-group">
+            <button class="settings-button save-button">Save</button>
+            <button class="settings-button cancel-button">Cancel</button>
+          </div>
+        </div>
+      </div>
       <div class="content-container">
         <h1>Und*ck</h1>
         <p>DuckDuckGo's bang redirects are too slow. Add the following URL as a custom search engine to your browser. Enables <a href="https://duckduckgo.com/bang.html" target="_blank">all of DuckDuckGo's bangs.</a></p>
@@ -18,6 +36,9 @@ function noSearchDefaultPageRender() {
           />
           <button class="copy-button">
             <img src="/clipboard.svg" alt="Copy" />
+          </button>
+          <button class="settings-button" title="Settings">
+            <img src="/settings.svg" alt="Settings" />
           </button>
         </div>
       </div>
@@ -43,6 +64,39 @@ function noSearchDefaultPageRender() {
       copyIcon.src = "/clipboard.svg";
     }, 2000);
   });
+
+  // Settings modal functionality
+  const settingsButton = app.querySelector<HTMLButtonElement>(".settings-button[title='Settings']")!;
+  const settingsModal = app.querySelector<HTMLDivElement>("#settingsModal")!;
+  const defaultBangInput = app.querySelector<HTMLInputElement>("#defaultBang")!;
+  const saveButton = app.querySelector<HTMLButtonElement>(".save-button")!;
+  const cancelButton = app.querySelector<HTMLButtonElement>(".cancel-button")!;
+
+  settingsButton.addEventListener("click", () => {
+    settingsModal.style.display = "flex";
+    defaultBangInput.value = localStorage.getItem("default-bang") ?? DEFAULT_BANG;
+  });
+
+  const closeModal = () => {
+    settingsModal.style.display = "none";
+  };
+
+  // Close modal when clicking outside
+  settingsModal.addEventListener("click", (e) => {
+    if (e.target === settingsModal) {
+      closeModal();
+    }
+  });
+
+  saveButton.addEventListener("click", () => {
+    const newDefaultBang = defaultBangInput.value.trim().toLowerCase();
+    if (newDefaultBang) {
+      localStorage.setItem("default-bang", newDefaultBang);
+    }
+    closeModal();
+  });
+
+  cancelButton.addEventListener("click", closeModal);
 }
 
 const url = new URL(window.location.href);
