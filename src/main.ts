@@ -108,8 +108,8 @@ if (defaultParam) {
 }
 
 const defaultBang = bangs.find(
-  (b) => b.t === (defaultParam ?? localStorage.getItem("default-bang") ?? DEFAULT_BANG)
-);
+  (b) => b.t === (defaultParam ?? localStorage.getItem("default-bang"))
+) || bangs.find((b) => b.t === DEFAULT_BANG);
 
 function getBangredirectUrl() {
   const query = url.searchParams.get("q")?.trim() ?? "";
